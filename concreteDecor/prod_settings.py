@@ -9,8 +9,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         "NAME": "concretedecor",
-        "USER": "admin",
-        "PASSWORD": "1234",
+        "USER": "cduser",
+        "PASSWORD": "concrete_decor",
         "HOST": "127.0.0.1",
         "PORT": "5432",
     }
