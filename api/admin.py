@@ -19,8 +19,15 @@ class ProductImageInline(admin.TabularInline):
     extra = 1  # Показывать одну пустую форму для добавления изображения
 
 
+class ProductCharacteristicInline(admin.StackedInline):
+    model = ProductCharacteristic
+    extra = 1  # Показывает одну пустую форму для добавления новой характеристики
+    verbose_name = "Характеристика"
+    verbose_name_plural = "Характеристики"
+
+
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductImageInline]
+    inlines = [ProductCharacteristicInline, ProductImageInline]
     list_display = ('name', 'price', 'stock')  # Поля, которые будут отображаться в списке товаров
 
 

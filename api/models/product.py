@@ -5,8 +5,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название товара')
     category = models.ManyToManyField('Category', verbose_name='Категория', related_name='products', blank=True)
     description = models.TextField(verbose_name='Описание товара')
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
-    characteristics = models.JSONField(verbose_name="Характеристики", null=True, blank=True)
+    price = models.PositiveIntegerField(verbose_name='Цена')
     stock = models.PositiveIntegerField(verbose_name='Количество на складе')
 
     class Meta:
@@ -18,9 +17,23 @@ class Product(models.Model):
         return self.name
 
 
+class ProductCharacteristic(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='characteristics', verbose_name='Товар')
+    key = models.CharField(max_length=255, verbose_name='Название характеристики')
+    value = models.CharField(max_length=255, verbose_name='Значение характеристики')
+
+    class Meta:
+        db_table = 'product_characteristic'
+        verbose_name = 'Характеристика товара'
+        verbose_name_plural = 'Характеристики товара'
+
+    def __str__(self):
+        return f"{self.key}: {self.value}"
+
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images', verbose_name='Товар')
-    image = models.ImageField(upload_to='media/products/', verbose_name='Изображение')
+    image = models.ImageField(upload_to='products/', verbose_name='Изображение')
 
     class Meta:
         db_table = 'product_image'
