@@ -67,7 +67,7 @@ class OrderCreateSerializer(serializers.Serializer):
             elif promo_code.discount_percentage:
                 discount_amount = total_price * (promo_code.discount_percentage / 100)
             total_price -= discount_amount
-        PromoCodeUsage.objects.create(user=user, promo_code=promo_code)
+            PromoCodeUsage.objects.create(user=user, promo_code=promo_code)
 
         # Списание бонусных баллов, если указано `use_loyalty_points`
         if validated_data.get('use_loyalty_points') and user.loyalty_points > 0:
@@ -78,7 +78,7 @@ class OrderCreateSerializer(serializers.Serializer):
 
         # Добавляем стоимость доставки
         delivery_cost = self.calculate_delivery_cost(validated_data['delivery_method'])
-        total_price = delivery_cost
+        total_price += delivery_cost
 
         # Создаем заказ
         order = Order.objects.create(

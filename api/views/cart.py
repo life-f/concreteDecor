@@ -59,6 +59,7 @@ class CartView(APIView):
             else:
                 cart_item.delete()
             serializer = CartItemSerializer(cart_item)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             # Обработка для неавторизованного пользователя (сессионная корзина)
             if product_id in cart:
@@ -73,8 +74,7 @@ class CartView(APIView):
             request.session["cart"] = cart
             request.session.modified = True
             serializer = {"product_id": product_id, "quantity": cart[product_id]["quantity"]}
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer, status=status.HTTP_200_OK)
 
     def get(self, request):
         """
