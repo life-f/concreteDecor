@@ -1,6 +1,6 @@
 from django.urls import path
 
-from api.views import CustomUserUpdateView, PromoCodeCheckView, CartView, OrdersView, CreateOrderView
+from api.views import CustomUserUpdateView, PromoCodeCheckView, CartView, OrdersView, CreateOrderView, SeriesDetailView
 from api.views.category import CategoryListView
 from api.views.product import ProductCatalogView
 
@@ -13,4 +13,5 @@ urlpatterns = [
     path('cart/', CartView.as_view(), name='cart'),
     path('orders/', OrdersView.as_view(), name='order'),
     path('order/create/', CreateOrderView.as_view(), name='create-order'),
+    path('series/<int:id>/', SeriesDetailView.as_view(), name='series-detail'),
 ]

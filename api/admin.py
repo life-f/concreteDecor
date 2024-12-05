@@ -2,8 +2,6 @@ from django.contrib import admin
 
 from api.models import *
 
-# admin.site.register(Product)
-# admin.site.register(ProductImage)
 admin.site.register(Category)
 admin.site.register(Cart)
 admin.site.register(CartItem)
@@ -12,6 +10,7 @@ admin.site.register(PromoCodeUsage)
 admin.site.register(CustomUser)
 admin.site.register(Order)
 admin.site.register(OrderItem)
+admin.site.register(Series)
 
 
 class ProductImageInline(admin.TabularInline):
@@ -29,6 +28,9 @@ class ProductCharacteristicInline(admin.StackedInline):
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductCharacteristicInline, ProductImageInline]
     list_display = ('name', 'price', 'stock')  # Поля, которые будут отображаться в списке товаров
+    list_filter = ('series',)
+    search_fields = ('name', 'description')  # Поиск по названию и описанию
+    fields = ('name', 'description', 'price', 'stock', 'series', 'category')  # Поля для редактирования
 
 
 admin.site.register(Product, ProductAdmin)

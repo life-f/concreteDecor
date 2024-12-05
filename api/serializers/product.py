@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from api.models import Product, Category, ProductImage, ProductCharacteristic
+
+from api.models import Product, ProductImage, ProductCharacteristic
 from api.serializers.category import CategorySerializer
 
 
@@ -13,6 +14,14 @@ class ProductCharacteristicSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductCharacteristic
         fields = ['key', 'value']
+
+
+class ProductNameImageSerializer(serializers.ModelSerializer):
+    images = ImageSerializer(many=True)
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'images']
 
 
 class ProductSerializer(serializers.ModelSerializer):

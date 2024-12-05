@@ -81,13 +81,7 @@ WSGI_APPLICATION = 'concreteDecor.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
@@ -151,10 +145,12 @@ DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': True,
     # 'SEND_ACTIVATION_EMAIL': True,
     # 'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
+    "PASSWORD_RESET_CONFIRM_URL": 'auth/users/reset_password_confirm/{uid}/{token}',
     'SERIALIZERS': {
         'user_create': 'api.serializers.user.CustomUserCreateSerializer',
         'user_create_password_retype': 'api.serializers.user.CustomUserCreateSerializer',
         'user': 'api.serializers.CustomUserCreateSerializer',
+        'token_create': 'api.serializers.user.CustomTokenCreateSerializer',
     },
 }
 

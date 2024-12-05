@@ -4,6 +4,8 @@ from django.db import models
 class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название товара')
     category = models.ManyToManyField('Category', verbose_name='Категория', related_name='products', blank=True)
+    series = models.ForeignKey("Series", on_delete=models.PROTECT, null=True, blank=True, related_name="products",
+                               verbose_name="Серия")
     description = models.TextField(verbose_name='Описание товара')
     price = models.PositiveIntegerField(verbose_name='Цена')
     stock = models.PositiveIntegerField(verbose_name='Количество на складе')

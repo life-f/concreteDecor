@@ -73,7 +73,7 @@ class CartView(APIView):
                 del cart[product_id]
             request.session["cart"] = cart
             request.session.modified = True
-            serializer = {"product_id": product_id, "quantity": cart[product_id]["quantity"]}
+            serializer = {"product_id": product_id, "quantity": cart[product_id]["quantity"] if product_id in cart else 0}
         return Response(serializer, status=status.HTTP_200_OK)
 
     def get(self, request):
