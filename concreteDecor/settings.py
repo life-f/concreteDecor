@@ -154,6 +154,10 @@ DJOSER = {
     },
 }
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Хранение сессий в базе данных
+SESSION_COOKIE_NAME = 'sessionid'  # Название cookie для сессий
+SESSION_COOKIE_AGE = 1209600  # Срок действия cookie (в секундах)
+
 # smtp
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = False
