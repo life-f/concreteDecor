@@ -1,5 +1,6 @@
 import datetime
 
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -22,6 +23,8 @@ class CartView(APIView):
                 cart.updated_at = datetime.datetime.now()
                 cart.save()
             return cart, True  # Возвращаем корзину и флаг "авторизованный пользователь"
+        else:
+            return {}, False
 
     def post(self, request):
         """
@@ -54,6 +57,8 @@ class CartView(APIView):
 
             serializer = CartItemSerializer(cart_item)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response("Пользователь не авторизован", status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         """

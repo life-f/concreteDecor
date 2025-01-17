@@ -59,14 +59,14 @@ class CustomTokenCreateSerializer(TokenCreateSerializer):
         self.user = authenticate(
             request=self.context.get("request"), **params, password=password
         )
-
         if not self.user:
             self.user = User.objects.filter(**params).first()
+
             if self.user and not self.user.check_password(password):
                 self.fail("invalid_credentials")
         if self.user and self.user.is_active:
             return attrs
-        if not self.user.is_active:
+        if self.user and not self.user.is_active:
             send_mail(
                 'Код подтверждения регистрации',
                 f'Ваш код активации: {self.user.activation_code}',

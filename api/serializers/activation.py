@@ -10,12 +10,14 @@ class ActivationSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email')
         activation_code = data.get('activation_code')
+        print(activation_code)
 
         try:
             user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
             raise serializers.ValidationError("Пользователь с данным email не найден.")
 
+        print(user.activation_code)
         if user.activation_code != activation_code:
             raise serializers.ValidationError("Неверный код активации.")
 
