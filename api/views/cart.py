@@ -5,8 +5,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from api.models import Product, Cart, CartItem
-from api.serializers import CartItemSerializer, CartItemQuantitySerializer
+from api.models import Product, Cart, CartItem, PromoCode
+from api.serializers import CartItemSerializer, CartItemQuantitySerializer, OrderCreateSerializer
 import json
 
 
@@ -78,3 +78,30 @@ class CartView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response({}, status=status.HTTP_200_OK)
+
+
+class CartTotalSum(APIView):
+    """API для получения стоимости корзины"""
+
+    def post(self, request):
+        total = 0
+        cart, is_user_cart = CartView.get_cart_for_user(CartView(), request)
+        if is_user_cart:
+            cart_items = CartItem.objects.filter(cart__user=request.user)
+            total = sum(item.product.price * item.quantity for item in cart_items)
+        if not is_user_cart:
+            cart = json.loads(request.data['cart'])
+            total = sum(item.product.price * item.quantity for item in cart)
+        total += OrderCreateSerializer.calculate_delivery_cost(OrderCreateSerializer(), '')
+        if 'promocode' in request.data and request.data['promocode']:
+            promo_code = PromoCode.objects.get(code=request.data['promocode'], is_active=True)
+            discount_amount = 0
+            if promo_code:
+                if promo_code.discount_amount:
+                    discount_amount = promo_code.discount_amount
+                elif promo_code.discount_percentage:
+                    discount_amount = total * (promo_code.discount_percentage / 100)
+            total -= float(discount_amount)
+        if total < 0:
+            total = 0
+        return Response({"total": total}, status=status.HTTP_200_OK)

@@ -47,7 +47,7 @@ class OrderCreateSerializer(serializers.Serializer):
             return 10.00  # фиксированная стоимость экспресс-доставки
         elif delivery_method == 'pickup':
             return 0.00  # самовывоз бесплатный
-        return 0.00
+        return 50.00
 
     def create_order(self, user, validated_data):
         # Получаем данные из корзины

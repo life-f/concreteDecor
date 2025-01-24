@@ -28,7 +28,6 @@ class PromoCode(models.Model):
     def is_usable(self):
         """Проверка, можно ли еще использовать промокод"""
         total_usage = self.usages.count()  # Используем related_name для подсчета использований
-        print(total_usage)
         return self.is_active and total_usage < self.max_usage and self.expiration_date > timezone.now()
 
     class Meta:
