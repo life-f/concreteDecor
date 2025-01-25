@@ -41,3 +41,12 @@ class ProductFullSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
+
+class ProductForSeriesSerializer(serializers.ModelSerializer):
+    """Сериализатор для серий товаров"""
+    images = ImageSerializer(many=True)
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'color', 'images']

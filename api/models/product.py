@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -6,6 +7,7 @@ class Product(models.Model):
     category = models.ManyToManyField('Category', verbose_name='Категория', related_name='products', blank=True)
     series = models.ForeignKey("Series", on_delete=models.PROTECT, null=True, blank=True, related_name="products",
                                verbose_name="Серия")
+    color = models.CharField(max_length=7, verbose_name="Цвет товара (для серий)", null=True, blank=True)
     description = models.TextField(verbose_name='Описание товара')
     price = models.PositiveIntegerField(verbose_name='Цена')
     stock = models.PositiveIntegerField(verbose_name='Количество на складе')
@@ -18,6 +20,17 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def clean(self):
+        """
+        Валидируем цвет: оно должно быть задано только если серия указана.
+        """
+        if self.series and not self.color:
+            raise ValidationError({'color': "Цвет обязателен, если указана серия."})
+        if not self.series and self.color:
+            raise ValidationError({'color': "Цвет нельзя указывать без серии."})
+        # Валидируем формат цвета (HEX)
+        if self.color and not self.color.startswith('#') or len(self.color) != 7:
+            raise ValidationError({'color': "Цвет должен быть задан в формате HEX (#RRGGBB)."})
 
 class ProductCharacteristic(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='characteristics', verbose_name='Товар')

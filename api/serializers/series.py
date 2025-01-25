@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from api.models import Series
-from api.serializers import ProductSerializer, ProductNameImageSerializer
+from api.serializers import ProductNameImageSerializer, ProductForSeriesSerializer
 
 
 class SeriesSerializer(serializers.ModelSerializer):
-    products = ProductSerializer(many=True, read_only=True)
+    products = ProductForSeriesSerializer(many=True, read_only=True)
 
     class Meta:
         model = Series

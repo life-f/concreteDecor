@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.forms import TextInput
 
 from api.models import *
 
@@ -30,7 +31,15 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'stock')  # Поля, которые будут отображаться в списке товаров
     list_filter = ('series',)
     search_fields = ('name', 'description')  # Поиск по названию и описанию
-    fields = ('name', 'description', 'price', 'stock', 'series', 'category')  # Поля для редактирования
+    fields = ('name', 'description', 'price', 'stock', 'series', 'color', 'category')  # Поля для редактирования
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        """
+        Переопределяем поле color, чтобы отображать его как color picker.
+        """
+        if db_field.name == 'color':
+            kwargs['widget'] = TextInput(attrs={'type': 'color'})
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 admin.site.register(Product, ProductAdmin)
