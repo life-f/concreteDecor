@@ -1,0 +1,27 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>Аналитика заказов и клиентов</h1>
+
+<form method="get">
+    <label>Выберите период:</label>
+    <select name="period" onchange="updateChart()">
+        <option value="week" {% if request.GET.period == "week" %}selected{% endif %}>Неделя</option>
+        <option value="month" {% if request.GET.period == "month" %}selected{% endif %}>Месяц</option>
+        <option value="90" {% if request.GET.period == "180" %}selected{% endif %}>180 дней</option>
+    </select>
+</form>
+
+<!-- График -->
+<img id="analytics-chart-orders" src="{% url 'admin:analytics_chart_orders' %}?period=month" alt="График аналитики заказов">
+<img id="analytics-chart-clients" src="{% url 'admin:analytics_chart_clients' %}?period=month" alt="График аналитики клиентов">
+
+<script>
+function updateChart() {
+    const period = document.querySelector("select[name='period']").value;
+    document.getElementById("analytics-chart-orders").src = "{% url 'admin:analytics_chart_orders' %}?period=" + period;
+    document.getElementById("analytics-chart-clients").src = "{% url 'admin:analytics_chart_clients' %}?period=" + period;
+}
+</script>
+
+{% endblock %}

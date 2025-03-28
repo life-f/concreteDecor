@@ -22,9 +22,11 @@ from django.urls import path, include
 from django.views.static import serve
 
 from api.views import ActivationView
+from api.admin import admin_site
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    path("admin/", admin_site.urls),
     path('auth/activate/', ActivationView.as_view(), name='activation'),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
