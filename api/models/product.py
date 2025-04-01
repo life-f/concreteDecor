@@ -32,6 +32,7 @@ class Product(models.Model):
         if self.color and not self.color.startswith('#') or len(self.color) != 7:
             raise ValidationError({'color': "Цвет должен быть задан в формате HEX (#RRGGBB)."})
 
+
 class ProductCharacteristic(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='characteristics', verbose_name='Товар')
     key = models.CharField(max_length=255, verbose_name='Название характеристики')
@@ -57,3 +58,52 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f'Изображение для {self.product.name}'
+
+
+class ProductPriceHistory(models.Model):
+    """
+    Модель для хранения записей о цене и расходах товара на конкретную дату.
+    """
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='price_history', verbose_name='Товар')
+    date = models.DateField(verbose_name='Дата')
+    price = models.PositiveIntegerField(verbose_name='Цена на дату')
+    # expense_per_unit = models.PositiveIntegerField(verbose_name='Расходы на единицу товара')
+
+    class Meta:
+        db_table = 'product_price_history'
+        verbose_name = 'История изменения цены'
+        verbose_name_plural = 'История изменения цен'
+        unique_together = ('product', 'date')
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.product.name} — {self.date}: {self.price} руб."
+
+    @property
+    def total_expenses(self):
+        """Сумма всех расходов по всем категориям на эту дату."""
+        return sum(item.cost for item in self.expenses.all())
+
+    @property
+    def formatted_expenses(self):
+        """
+        Возвращает строку вида:
+        "бетон(20), краситель(10), гравировка(120)"
+        если есть категории расходов.
+        """
+        # Можно оформить красивее, в зависимости от предпочтений.
+        return ", ".join(
+            f"{item.name}({item.cost})" for item in self.expenses.all()
+        )
+
+
+class ExpenseItem(models.Model):
+    """
+    Модель для хранения отдельных категорий расходов, связанных с конкретной записью в истории цен.
+    """
+    price_history = models.ForeignKey(ProductPriceHistory,on_delete=models.CASCADE,related_name='expenses',verbose_name='Строка истории цен')
+    name = models.CharField(max_length=100, verbose_name='Категория расхода')
+    cost = models.PositiveIntegerField(verbose_name='Сумма')
+
+    def __str__(self):
+        return f"{self.name} ({self.cost})"
