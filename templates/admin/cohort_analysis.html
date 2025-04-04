@@ -1,0 +1,47 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+    <form method="get" style="margin-bottom: 20px;">
+        <label>Начальная дата:</label>
+        <input type="date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+        <label>Конечная дата:</label>
+        <input type="date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+        <label>Размер когорты (дней):</label>
+        <input type="number" name="cohort_size" value="{{ cohort_size }}">
+        <button type="submit">Построить</button>
+    </form>
+
+    <table border="1" cellspacing="0" cellpadding="6">
+        <thead>
+        <tr>
+            <th>Когорта / Период</th>
+            {% for p, k in periods %}
+                <th>{{ p | date:"d.m.Y" }} когорта</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in cohort_table %}
+            <tr>
+                {% for key, values in row.items %}
+                    {% if key == "period" %}
+                        <td><strong>
+                            {% for s in values %}
+                                {% if forloop.last %} - {% endif %}
+                                {{ s |date:"d.m.Y" }}
+                            {% endfor %}
+                        </strong></td>
+                    {% else %}
+                        {% for v in values %}
+                            <td style="text-align: center">
+                                {{ v }}
+                            </td>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

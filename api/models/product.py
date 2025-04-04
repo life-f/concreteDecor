@@ -105,5 +105,10 @@ class ExpenseItem(models.Model):
     name = models.CharField(max_length=100, verbose_name='Категория расхода')
     cost = models.PositiveIntegerField(verbose_name='Сумма')
 
+    class Meta:
+        db_table = 'expence_item'
+        verbose_name = 'Категория расхода'
+        verbose_name_plural = 'Категории расхода'
+
     def __str__(self):
         return f"{self.name} ({self.cost})"
