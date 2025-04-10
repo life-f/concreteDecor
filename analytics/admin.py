@@ -159,8 +159,10 @@ class UnitEconomicsPageAdmin(admin.ModelAdmin):
         # если нет даты — берём последний месяц
         today = datetime.today()
         default_start = today - timedelta(days=30)
-        start_date = datetime.strptime(request.GET.get("start_date"), "%Y-%m-%d").date() if start_str else default_start
-        end_date = datetime.strptime(request.GET.get("end_date"), "%Y-%m-%d").date() if end_str else today
+        start_date = datetime.strptime(request.GET.get("start_date"), "%Y-%m-%d").date() if request.GET.get(
+            "start_date") else default_start
+        end_date = datetime.strptime(request.GET.get("end_date"), "%Y-%m-%d").date() if request.GET.get(
+            "end_date") else today
 
         # Подготовка к расчету маркетинга (CAC)
         last_ue_record = UnitEconomicsRecord.objects.all().order_by("-date").first()
@@ -179,13 +181,15 @@ class UnitEconomicsPageAdmin(admin.ModelAdmin):
         C2P_CR = c / (c + carts_count) if (c + carts_count) > 0 else 0
         S2P_CR = c / u if u > 0 else 0
         V2P_CR = c / v if v > 0 else 0
-        CAC = float(CPV) / V2P_CR
+        CAC = float(CPV) / V2P_CR if V2P_CR > 0 else 0
 
         # Расчет средних показателей для этих пользователей
-        AOV = sum(orders.values_list('total_price', flat=True)) / orders.count()
+        AOV = (sum(orders.values_list('total_price', flat=True)) / orders.count()) if orders.count() > 0 else 0
         AOC = orders.count() / u if u > 0 else 0
-        AIPC = sum(orders.values_list('items__quantity', flat=True)) / (orders.count())
-        AIP = sum(orders.values_list('total_price', flat=True)) / sum(orders.values_list('items__quantity', flat=True))
+        AIPC = (sum(orders.values_list('items__quantity', flat=True)) / orders.count()) if orders.count() > 0 else 0
+        AIP = (sum(orders.values_list('total_price', flat=True)) / sum(
+            orders.values_list('items__quantity', flat=True))) if sum(
+            orders.values_list('items__quantity', flat=True)) > 0 else 0
         gross_per1 = float(AOV) * AOC - CAC
 
         table = {
