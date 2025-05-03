@@ -91,7 +91,7 @@ class CartTotalSum(APIView):
             total = sum(item.product.price * item.quantity for item in cart_items)
         if not is_user_cart:
             cart = json.loads(request.data['cart'])
-            total = sum(item.product.price * item.quantity for item in cart)
+            total = sum(item['product']['price'] * item['quantity'] for item in cart)
         total += OrderCreateSerializer.calculate_delivery_cost(OrderCreateSerializer(), '')
         if 'promocode' in request.data and request.data['promocode']:
             promo_code = PromoCode.objects.get(code=request.data['promocode'], is_active=True)

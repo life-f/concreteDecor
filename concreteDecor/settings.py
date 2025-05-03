@@ -142,10 +142,12 @@ REST_FRAMEWORK = {
 }
 
 DJOSER = {
+    "SITE_NAME": "Concrete Decor",
     # 'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
     # 'SEND_ACTIVATION_EMAIL': True,
     # 'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
+    "PASSWORD_RESET_CONFIRM_RETYPE": True,
     "PASSWORD_RESET_CONFIRM_URL": 'auth/users/reset_password_confirm/{uid}/{token}',
     'SERIALIZERS': {
         'user_create': 'api.serializers.user.CustomUserCreateSerializer',
@@ -165,7 +167,7 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_HOST_USER = 'concrete.decor.spb@yandex.ru'
-EMAIL_HOST_PASSWORD = 'olrjybazlfwfbdrh'
+EMAIL_HOST_PASSWORD = 'svwaojvswruufyxc'
 EMAIL_PORT = 465
 DEFAULT_FROM_EMAIL = 'concrete.decor.spb@yandex.ru'
 
