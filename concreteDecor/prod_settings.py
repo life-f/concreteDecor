@@ -1,5 +1,7 @@
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+import os
+
 from concreteDecor.settings import DEBUG
 
 ALLOWED_HOSTS = ['*']
@@ -29,3 +31,11 @@ DJOSER = {
         'token_create': 'api.serializers.user.CustomTokenCreateSerializer',
     },
 }
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
