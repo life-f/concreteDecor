@@ -6,10 +6,12 @@ charset-normalizer==3.4.0
 cryptography==43.0.1
 defusedxml==0.8.0rc2
 django-templated-mail==1.1.1
+django-cors-headers==4.6.0
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 djoser==2.2.3
 idna==3.10
+matplotlib==3.10.0
 oauthlib==3.2.2
 pycparser==2.22
 PyJWT==2.9.0
