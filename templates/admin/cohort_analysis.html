@@ -34,9 +34,15 @@
                         </strong></td>
                     {% else %}
                         {% for v in values %}
-                            <td style="text-align: center">
-                                {{ v }}
-                            </td>
+                            {% if v > 0 %}
+                                <td style="text-align: center; background-color: lightgreen">
+                                    {{ v }}
+                                </td>
+                            {% else %}
+                                <td style="text-align: center">
+                                    {{ v }}
+                                </td>
+                            {% endif %}
                         {% endfor %}
                     {% endif %}
                 {% endfor %}
