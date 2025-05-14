@@ -3,14 +3,13 @@ from datetime import datetime, timedelta
 
 import matplotlib.pyplot as plt
 from django.contrib import admin
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import path
-from matplotlib.style.core import context
 
-from api.models import CustomUser, Product, Cart
+from api.models import CustomUser, Cart, ExpenseItem
 from api.models import Order
 from concreteDecor.admin import admin_site
 from .models import UnitEconomics, CohortAnalysis, Statistic, UnitEconomicsRecord
@@ -171,26 +170,35 @@ class UnitEconomicsPageAdmin(admin.ModelAdmin):
         users = CustomUser.objects.filter(date_joined__gte=start_date, date_joined__lte=end_date)
         u = users.count()
         orders = Order.objects.filter(user__in=users)
-        c = orders.distinct('user').count()  # количество первых заказов - количество новых покупателей
+        p = orders.distinct(
+            'user').count()  # количество первых заказов - количество новых покупателей, количество оформленных корзин
         carts = Cart.objects.filter(user__in=users)
-        carts_count = carts.distinct('user').count()  # количество неоформленных корзин
+        c = carts.distinct('user').count()  # количество неоформленных корзин
+        cogs = (orders.filter(items__product__price_history__isnull=False)
+                .annotate(total_expenses=Sum("items__product__price_history__expenses__cost"))).values_list(
+            'total_expenses', flat=True)
+        print(cogs)
+        AVG_COGS = (float(sum(cogs)) / cogs.count()) if cogs.count() > 0 else 0  # средние затраты на товар
 
         # Расчет конверсий
-        V2S_CR = u / v if u > 0 else 0
-        V2C_CR = (c + carts_count) / v if v > 0 else 0
-        C2P_CR = c / (c + carts_count) if (c + carts_count) > 0 else 0
-        S2P_CR = c / u if u > 0 else 0
-        V2P_CR = c / v if v > 0 else 0
-        CAC = float(CPV) / V2P_CR if V2P_CR > 0 else 0
+        V2S_CR = (u / v) if v > 0 else 0
+        V2C_CR = ((p + c) / v) if v > 0 else 0
+        C2P_CR = (p / (p + c)) if (p + c) > 0 else 0
+        S2P_CR = (p / u) if u > 0 else 0
+        V2P_CR = (p / v) if v > 0 else 0
+        CAC = (float(CPV) / V2P_CR) if V2P_CR > 0 else 0
 
         # Расчет средних показателей для этих пользователей
-        AOV = (sum(orders.values_list('total_price', flat=True)) / orders.count()) if orders.count() > 0 else 0
-        AOC = orders.count() / u if u > 0 else 0
-        AIPC = (sum(orders.values_list('items__quantity', flat=True)) / orders.count()) if orders.count() > 0 else 0
+        AOV = (sum(orders.values_list('total_price',
+                                      flat=True)) / orders.count()) if orders.count() > 0 else 0  # средний чек
+        AOC = (orders.count() / u) if u > 0 else 0  # среднее количество заказов
+        AIPC = (sum(orders.values_list('items__quantity',
+                                       flat=True)) / orders.count()) if orders.count() > 0 else 0  # среднее количество товаров в корзине
         AIP = (sum(orders.values_list('total_price', flat=True)) / sum(
             orders.values_list('items__quantity', flat=True))) if sum(
-            orders.values_list('items__quantity', flat=True)) > 0 else 0
-        gross_per1 = float(AOV) * AOC - CAC
+            orders.values_list('items__quantity', flat=True)) > 0 else 0  # средняя цена товара в корзине
+        ARPU = (sum(orders.values_list('total_price', flat=True)) / u) if u > 0 else 0  # средняя выручка с пользователя
+        gross_per1 = float(ARPU) - float(CAC) - float(AVG_COGS)
 
         table = {
             "v": v,
@@ -205,6 +213,7 @@ class UnitEconomicsPageAdmin(admin.ModelAdmin):
             "AOC": AOC,
             "AIPC": AIPC,
             "AIP": AIP,
+            "ARPU": ARPU,
             "gross_per1": gross_per1,
         }
         context = {

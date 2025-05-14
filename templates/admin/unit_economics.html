@@ -22,28 +22,57 @@
     </form>
 
     <table border="1" cellspacing="0" cellpadding="6">
-    {#    <thead>#}
-    {#    <tr>#}
-    {#        <th>#}
-    {#        </th>#}
-    {#    </tr>#}
-    {#    </thead>#}
-    <tbody>
-    {% for key, value in table.items %}
-        <tr>
-            {#            {% if key == "price" %}#}
-            {#                <td><strong>Цена</strong></td>#}
-            {#                <td>{{ value }}</td>#}
-            {#            {% elif key == "expences" %}#}
-            {#                <td><strong>Расходы</strong></td>#}
-            {#                <td>{{ value }}</td>#}
-            {#            {% else %}#}
-            <td><strong>{{ key }}</strong></td>
-            <td>{{ value | floatformat:"2" }}</td>
-            {#            {% endif %}#}
-        </tr>
-    {% endfor %}
-    </tbody>
+        <tbody>
+        {% for key, value in table.items %}
+            <tr>
+                {% if key == "v" %}
+                    <td><strong>Количество посетителей</strong></td>
+                {% elif key == "CPV" %}
+                    <td><strong>Цена посетителя</strong></td>
+                {% elif key == "V2S_CR" %}
+                    <td><strong>Конверсия в пользователя из посетителя сайта</strong></td>
+                {% elif key == "V2C_CR" %}
+                    <td><strong>Конверсия в корзину из посетителей</strong></td>
+                {% elif key == "C2P_CR" %}
+                    <td><strong>Конверсия в покупателя из корзины</strong></td>
+                {% elif key == "S2P_CR" %}
+                    <td><strong>Конверсия в покупателя из регистрации</strong></td>
+                {% elif key == "V2P_CR" %}
+                    <td><strong>Конверсия в покупателя из посетителей</strong></td>
+                {% elif key == "CAC" %}
+                    <td><strong>Стоимость «приобретения» клиента</strong></td>
+                {% elif key == "AOV" %}
+                    <td><strong>Средний чек</strong></td>
+                {% elif key == "AOC" %}
+                    <td><strong>Среднее количество заказов</strong></td>
+                {% elif key == "AIPC" %}
+                    <td><strong>Среднее количество товаров в заказе</strong></td>
+                {% elif key == "AIP" %}
+                    <td><strong>Средняя стоимость товара в заказе</strong></td>
+                {% elif key == "ARPU" %}
+                    <td><strong>Средняя выручка с пользователя</strong></td>
+                {% elif key == "gross_per1" %}
+                    <td><strong>Средняя прибыль с пользователя</strong></td>
+                {% else %}
+                    <td><strong></strong></td>
+                {% endif %}
+                <td><strong>{{ key }}</strong></td>
+                {% if key == "gross_per1" %}
+                    {% if value > 0 %}
+                        <td style="background-color: lightgreen">{{ value | floatformat:"2" }}</td>
+                    {% elif value < 0 %}
+                        <td style="background-color: indianred">{{ value | floatformat:"2" }}</td>
+                    {% else %}
+                        <td>{{ value | floatformat:"2" }}</td>
+                    {% endif %}
+                {% else %}
+                    <td>{{ value | floatformat:"2" }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p> Если параметр зеленый, юнит-экономика сходится, Вы получаете прибыль. Если красный, Вы работаете в убыток </p>
 
 {% endblock %}
 {% block sidebar %}{% endblock %}
