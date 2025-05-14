@@ -17,7 +17,7 @@ DATABASES = {
 }
 
 DJOSER = {
-    "EMAIL_FRONTEND_DOMAIN": "concrete.decor.ru",
+    "EMAIL_FRONTEND_DOMAIN": "concrete-decor.ru",
     "EMAIL_FRONTEND_SITE_NAME": "Concrete Decor",
     'USER_CREATE_PASSWORD_RETYPE': True,
     "PASSWORD_RESET_CONFIRM_RETYPE": True,

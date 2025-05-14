@@ -303,7 +303,7 @@ class CohortAnalysisPageAdmin(admin.ModelAdmin):
         for order in orders:
             cidx = user_to_cohort_idx[order.user_id]
             for c in range(len(cohorts)):
-                if cohorts[c][0] <= datetime.date(order.created_at) <= cohorts[c][1]:
+                if cohorts[c][0] <= order.created_at <= cohorts[c][1]:
                     results[c][cidx] += float(order.total_price)
         # Шаг 5. Строим структуру для шаблона
         # Каждая ячейка = results[period][cohort]
