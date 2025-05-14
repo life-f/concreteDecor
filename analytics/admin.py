@@ -264,7 +264,7 @@ class CohortAnalysisPageAdmin(admin.ModelAdmin):
         cohort_size = int(request.GET.get("cohort_size", 7))
 
         # если нет даты — берём последний месяц
-        today = datetime.today()
+        today = datetime.today().date()
         default_start = today - timedelta(days=30)
         start_date = datetime.strptime(start_str, "%Y-%m-%d").date() if start_str else default_start
         end_date = datetime.strptime(end_str, "%Y-%m-%d").date() if end_str else today
@@ -332,6 +332,9 @@ class CohortAnalysisPageAdmin(admin.ModelAdmin):
         }
 
         return TemplateResponse(request, "admin/cohort_analysis.html", context)
+
+    def __init__(self, model, admin_site):
+        super().__init__(model, admin_site)
 
 
 admin_site.register(Statistic, ClientOrdersPageAdmin)
