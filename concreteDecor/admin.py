@@ -10,12 +10,24 @@ class CustomAdminSite(admin.AdminSite):
     index_title = "Добро пожаловать в админ-панель"
 
     def get_app_list(self, request, app_label=None):
-        # Получаем стандартный список приложений
         app_list = super().get_app_list(request, app_label)
-        # Список разрешённых приложений (app_label)
         allowed_apps = ['api', 'analytics']
-        # Фильтруем приложения: оставляем только те, что входят в allowed_apps
-        app_list = [app for app in app_list if app['app_label'] in allowed_apps]
+        # app_list = [app for app in app_list if app['app_label'] in allowed_apps]
+        filtered_app_list = []
+        for app in app_list:
+            if app['app_label'] not in allowed_apps:
+                continue
+
+            if app['app_label'] == 'api':
+                filtered_models = [
+                    model for model in app['models']
+                    if model['object_name'] in ['Product', 'Order', 'CustomUser', 'PromoCode']  # здесь указываем нужные модели
+                ]
+                app['models'] = filtered_models
+
+            # Исключаем приложения без моделей после фильтрации
+            if len(app['models']) > 0:
+                filtered_app_list.append(app)
 
         # Сортируем приложения так, чтобы первым шёл 'api', а потом 'analytics'
         def sort_key(app):
