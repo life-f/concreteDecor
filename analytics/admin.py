@@ -165,8 +165,8 @@ class UnitEconomicsPageAdmin(admin.ModelAdmin):
 
         # Подготовка к расчету маркетинга (CAC)
         last_ue_record = UnitEconomicsRecord.objects.all().order_by("-date").first()
-        v = request.GET.get("v") if request.GET.get("v") else last_ue_record.visitors
-        CPV = request.GET.get("CPV") if request.GET.get("CPV") else last_ue_record.cost_per_visitor
+        v = float(request.GET.get("v").replace(',', '.')) if "v" in request.GET else float(last_ue_record.visitors)
+        CPV = float(request.GET.get("CPV").replace(',', '.')) if "CPV" in request.GET else float(last_ue_record.cost_per_visitor)
         users = CustomUser.objects.filter(date_joined__gte=start_date, date_joined__lte=end_date)
         u = users.count()
         orders = Order.objects.filter(user__in=users)
@@ -177,7 +177,6 @@ class UnitEconomicsPageAdmin(admin.ModelAdmin):
         cogs = (orders.filter(items__product__price_history__isnull=False)
                 .annotate(total_expenses=Sum("items__product__price_history__expenses__cost"))).values_list(
             'total_expenses', flat=True)
-        print(cogs)
         AVG_COGS = (float(sum(cogs)) / cogs.count()) if cogs.count() > 0 else 0  # средние затраты на товар
 
         # Расчет конверсий
