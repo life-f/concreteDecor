@@ -6,6 +6,7 @@ from api.models.user import CustomUser
 
 class Order(models.Model):
     STATUS_CHOICES = [
+        ('awaiting_pay', 'Ожидает оплаты'),
         ('pending', 'В ожидании'),
         ('confirmed', 'Подтвержден'),
         ('shipped', 'Отправлен'),
@@ -17,7 +18,7 @@ class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name='Пользователь', related_name='orders')
     shipping_address = models.TextField(verbose_name='Адрес доставки')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Общая стоимость')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='Статус заказа')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='awaiting_pay', verbose_name='Статус заказа')
     promo_code = models.ForeignKey('PromoCode', on_delete=models.SET_NULL, null=True, blank=True,
                                    verbose_name='Промокод')
     delivery_method = models.CharField(max_length=20, default='Самовывоз', verbose_name='Способ доставки')

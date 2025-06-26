@@ -36,3 +36,11 @@ class CreateOrderView(APIView):
         )
 
         return Response({"message": "Заказ успешно создан", "order_id": order.id}, status=status.HTTP_201_CREATED)
+
+    def put(self, request):
+        order = Order.objects.get(id=request.data.get("id"))
+        serializer = OrderSerializer(order, data=request.data, context={'user': request.user})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+
+        return Response({"message": "Заказ успешно изменен", "order_id": order.id}, status=status.HTTP_200_OK)
